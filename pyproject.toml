@@ -8,6 +8,8 @@ authors = ["Luba <luciano.eq@outlook.com>"]
 python = "^3.10"
 pandas = "1.4.2"
 pre-commit = "2.18.1"
+mkdocs-material = "8.2.11"
+mkdocs-mermaid2-plugin = "0.6.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

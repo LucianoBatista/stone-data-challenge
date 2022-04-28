@@ -1,0 +1,23 @@
+site_name:
+theme:
+  name: material
+markdown_extensions:
+  - meta
+  - attr_list
+  - md_in_html
+  - tables
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid
+plugins:
+  - search
+  - mermaid2
+nav:
+  - Home: "index.md"
