@@ -1,17 +1,19 @@
-# Welcome to MkDocs
+# Data Challenge Stone 2022
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+Para mais informações sobre o desafio acesse: LINK
 
-## Commands
+## Framework de Avaliação
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+### Validações iniciais
 
-## Project layout
+#### 1. Checks de inconsistências nas bases individuais
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+### Fluxo de etapas realizadas
+
+#### 1. Tratamento Qualquer
+
+#### 2. Cruzamento nos dados
+
+#### 3. Limpeza
+
+### Conclusões e Insights

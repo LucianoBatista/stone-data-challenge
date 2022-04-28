@@ -1,6 +1,13 @@
-site_name:
+site_name: Stone Data Challenge
 theme:
+  palette:
+    primary: green
+    accent: green
   name: material
+  font:
+    text: Roboto
+  features:
+    - content.code.annotate
 markdown_extensions:
   - meta
   - attr_list
@@ -20,4 +27,8 @@ plugins:
   - search
   - mermaid2
 nav:
-  - Home: "index.md"
+  - Framework de Avaliação: "index.md"
+  - Dicionário de Dados: "data_dict.md"
+extra_javascript:
+  - https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js
+  - javascripts/tablesort.js
