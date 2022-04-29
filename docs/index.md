@@ -6,6 +6,8 @@ Para mais informações sobre o desafio acesse: LINK
 
 ### Validações iniciais
 
+Vamos focar inicialmente nas tabelas de `portfolio_geral` e `portfolio_comunicados` para separar a base entre contratos que receberam notificação, e contratos que não receberam nenhum comunicado durante o período de quitação da linha de crédito.
+
 #### 1. Checks de inconsistências nas bases individuais
 
 ### Fluxo de etapas realizadas
