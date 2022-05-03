@@ -395,19 +395,50 @@ plot.make_beautiful_bar_plots(
 
 ![img-tipo-acao](imgs/tipo-acao.png)
 
-#### portfolio_geral
+#### 4. portfolio_geral
 
-Essa é a maior tabela que temos e a mesma tem todo o histórico de cada um dos mais de 12k de contratos registrados. Com ele nós temos as métricas de dsp e dspp, assim como detalhes de juros, valor de pagamento e outros dados que irão nos ajudar a correlaciona-la com as outras tabelas.
+Essa é a maior tabela que temos e a mesma tem todo o histórico de cada um dos mais de 12k de contratos registrados. Com essa tabela farei algumas sumarizações e criação de métricas envolvendo o dsp (Dias Corridos sem Pagamento) e o dspp (Dias Corridos sem Pagamento do Principal), que serão descritas na próxima do framework de avaliação.
 
-Como essa tabela vai passar por algumas transformações para indicar a melhor curva de acionamento na base, irei particionar a análise dela depois.
+Essa tabela, em conjunto com dados de todas as outras, irá nos auxiliar a responder o nosso problema principal: _Qual é a quantidade ideal de vezes que acionamos um cliente?_.
 
 ### Fluxo de etapas realizadas
 
-Vamos focar inicialmente nas tabelas de `portfolio_geral` e `portfolio_comunicados` para separar a base entre contratos que receberam notificação, e contratos que não receberam nenhum comunicado durante o período de quitação da linha de crédito.
+Tudo que foi feito até o momento pode ser encontrado no notebook `describe.ipynb`. Daqui pra frente iremos consumir dos notebooks `final_composition.ipynb` e `analysis.ipynb`. Onde o primeiro é o responsável por juntar as tabelas e o segundo possui o desenrolar da análise.
 
-#### 1. Tratamento Qualquer
+Como output, o notebook `final_composition.ipynb` irá nos fornecer um dataset que permitirá uma análise mais robusta e a entender a melhor curva de acionamento ao cliente.
 
-#### 2. Cruzamento nos dados
+#### 1. Import de libraries e dataset
+
+```py
+import pandas as pd
+from src.feature_engineering import features
+import numpy as np
+```
+
+Aqui vamos utilizar um módulo de feature engineering que criei para nos auxiliar na criação das features que vão nos auxiliar a escolher as melhores curvas de acionamento do cliente.
+
+```py
+# data
+geral_and_comunicados_df = pd.read_csv("data/portfolio_geral_comunicados.csv")
+```
+
+Como visto anteriormente, nem todos os clientes receberam acionamento, por isso nossa base passou de **mais 8M de registros para 6.6M.**
+
+#### 2. Criação de Features
+
+No dataset nós possuímos duas variáveis extremamente importantes, `dsp` e `dspp`. E segundo a documentação enviada, nós sabemos exatamente qual tipo de acionamento deve ser enviado ao cliente em cada um dos valores do dsp e do dspp.
+
+- tabela dsp
+- tabela dspp
+
+Sendo assim, vamos seguir com a criação das seguintes features:
+
+- tot_dsp_x: total de vezes que o dsp atingiu um valor de dias, onde x é a categoria
+- prop_dsp_x: prop entre quantidade de vezes que atingiu-se determinado valor e quantidade de vezes que houve um reversão no dsp, ou dspp.
+- mean_prop_dsp_x: média dos valores das prop de sucesso no acionamento
+- mean_prop_dspp_x: ...
+- tot_dspp_x:
+- prop_dspp_x:
 
 #### 3. Limpeza
 
