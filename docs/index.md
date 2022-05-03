@@ -407,50 +407,230 @@ Tudo que foi feito até o momento pode ser encontrado no notebook `describe.ipyn
 
 Como output, o notebook `final_composition.ipynb` irá nos fornecer um dataset que permitirá uma análise mais robusta e a entender a melhor curva de acionamento ao cliente.
 
-#### 1. Import de libraries e dataset
+#### 1. Merge e Criação de Features
+
+Primeiramente, vamos precisar trazer todos as nossas tabelas e as libs que serão utilizadas.
 
 ```py
 import pandas as pd
 from src.feature_engineering import features
 import numpy as np
+
+clients = pd.read_csv("data/portfolio_clientes.csv")
+tpv = pd.read_csv("data/portfolio_tpv.csv")
+comunicados = pd.read_csv("data/portfolio_comunicados.csv")
+geral = pd.read_csv("data/portfolio_geral.csv")
 ```
 
-Aqui vamos utilizar um módulo de feature engineering que criei para nos auxiliar na criação das features que vão nos auxiliar a escolher as melhores curvas de acionamento do cliente.
+Aqui vamos utilizar um módulo de feature engineering que criei para nos auxiliar na criação das features de uma forma mais modular e clean. Detalhes sobre essas etapas específicas de feature engineering vão ser retratadas em uma página bônus da documentação.
+
+##### Geral + Comunicados
+
+Como visto anteriormente, nem todos os clientes receberam acionamento, por isso, vamos precisar filtrar a base para contemplar apenas os casos que possuem acionamento.
 
 ```py
-# data
-geral_and_comunicados_df = pd.read_csv("data/portfolio_geral_comunicados.csv")
+# contratos únicos na tabela de comunicados
+unique_contratos = comunicados["contrato_id"].unique()
+
+# filtrando por esses contratos
+geral_comunicados = geral[geral["contrato_id"].isin(unique_contratos)]
+
+# como cada contrato possui mais de um acionamento, para evitar duplicidades
+# vamos agregar em uma lista os duplicados.
+comunicados_grouped = (
+    comunicados.groupby(["contrato_id", "dt_ref_portfolio", "data_acao"])[
+        ["tipo_acao", "status", "acao"]
+    ]
+    .agg(list)
+    .reset_index()
+)
+
+geral_comunicados_grouped = geral_comunicados.merge(
+    right=comunicados_grouped, how="left", on=["contrato_id", "dt_ref_portfolio"]
+)
 ```
 
-Como visto anteriormente, nem todos os clientes receberam acionamento, por isso nossa base passou de **mais 8M de registros para 6.6M.**
+Veja que estamos utilizando um `left-join` aqui por que a tabela `portfolio_geral` possui valores diários, e nem todos os dias ocorreram acionamentos, porém, ter essa informação é muiti útil para as próximas etapas.
 
-#### 2. Criação de Features
+Por fim, vamos realizar um sort nos dados, para garantir que o dsp e o dspp estarão na ordem correta mais pra frente, quando formos criar as novas features.
 
-No dataset nós possuímos duas variáveis extremamente importantes, `dsp` e `dspp`. E segundo a documentação enviada, nós sabemos exatamente qual tipo de acionamento deve ser enviado ao cliente em cada um dos valores do dsp e do dspp.
+```py
+geral_and_comunicados_sorted_df = geral_comunicados_grouped.sort_values(
+    ["contrato_id", "dt_ref_portfolio"]
+)
+```
 
-- tabela dsp
-- tabela dspp
+##### Criação de features de DSP e DSPP
 
-Sendo assim, vamos seguir com a criação das seguintes features:
+Aqui está uma **etapa muito importante** do fluxo da análise dos dados. Uma informação que precisamos ter para prosseguir com a análise é **se os acionamentos foram efetivos** para retornar o cliente para a utilização da maquininha da Stone.
 
-- tot_dsp_x: total de vezes que o dsp atingiu um valor de dias, onde x é a categoria
-- prop_dsp_x: prop entre quantidade de vezes que atingiu-se determinado valor e quantidade de vezes que houve um reversão no dsp, ou dspp.
-- mean_prop_dsp_x: média dos valores das prop de sucesso no acionamento
-- mean_prop_dspp_x: ...
-- tot_dspp_x:
-- prop_dspp_x:
+Tal feature aqui vai ser entendidad da seguinte forma:
+
+> Se o cliente retornou sua utilização da maquininha dentro de período que antecede o acionamento subsequente, configura SUCESSO.
+
+Com isso em mente, criou-se o módulo de `feature_engineering`, onde parte das funções contemplam exatamente esse cálculo. Os dois blocos de código abaixo apresentam como as funções são aplicadas por intermédio do `pandas`.
+
+```py
+# para o dsp
+contrato_dsp_features = (
+    geral_and_comunicados_sorted_df.groupby(["contrato_id"])["dsp"]
+    .agg(
+        [
+            features.total_success_dsp5,
+            features.total_success_dsp10,
+            features.total_success_dsp15,
+            features.total_success_dsp30,
+            features.total_success_dsp60,
+            features.total_success_dsp90,
+            features.prop_success_dsp5,
+            features.prop_success_dsp10,
+            features.prop_success_dsp15,
+            features.prop_success_dsp30,
+            features.prop_success_dsp60,
+            features.prop_success_dsp90,
+        ]
+    )
+    .reset_index()
+)
+
+# para o dspp
+contrato_dspp_features = (
+    geral_and_comunicados_sorted_df.groupby(["contrato_id"])["dspp"]
+    .agg(
+        [
+            features.total_success_dspp15,
+            features.total_success_dspp30,
+            features.total_success_dspp45,
+            features.prop_success_dspp15,
+            features.prop_success_dspp30,
+            features.prop_success_dspp45,
+        ]
+    )
+    .reset_index()
+)
+
+# merging os dois sets de features criadas
+contrato_dsp_dspp = contrato_dsp_features.merge(
+    right=contrato_dspp_features, on="contrato_id", how="inner"
+)
+```
+
+Veja que, aqui temos não só o total de sucesso em cada um dos acionamentos, mas também uma proporção entre: _acionamentos_com_sucesso / total_de_acionamentos_
+
+Por fim, para juntar esses valores num **score mais representativo**, vamos calcular as médias das proporções, considerando os casos onde de fato o cliente recebeu acionamento.
+
+```py
+means_dsp = []
+means_dspp = []
+for i, row in contrato_dsp_dspp.iterrows():
+    means_dsp.append(np.nanmean(row[7:13]))
+    means_dspp.append(np.nanmean(row[16:19]))
+
+contrato_dsp_dspp["score_dsp"] = means_dsp
+contrato_dsp_dspp["score_dspp"] = means_dspp
+```
+
+##### Entregou? Não Entregou? Leu?
+
+Um outro ponto muito importante que devemos levar em consideração é se o cliente de fato leu a mensagem ou se o mesmo até mesmo recebeu, já que vimos que o número de clientes que não recebem o acionamento (quando deveria ter recebido) é bastante alto, cerca de 47%.
+
+```py
+acionamentos_delivery = (
+    geral_and_comunicados_sorted_df.groupby(["contrato_id"])["status"]
+    .agg([features.get_entregue, features.get_lido, features.get_nao_entregue])
+    .reset_index()
+)
+
+# merge para adicionar ao nosso dataset final as features de entregue, não entregue e lido
+contrato_dsp_dspp_qtd_acoes = contrato_dsp_dspp.merge(
+    right=acionamentos_delivery, how="inner", on="contrato_id"
+)
+```
+
+Aqui, também estamos utilizando o módulo de `feature_engineering`.
+
+##### Valor devedor esperado
+
+Essa feature pode nos ajudar a entender se existe alguma relação entre o valor total de empréstimo do crédito com alguma outra feature que iremos trazer para compor a análise final. Como essa informação não estava explícita, resolvi considerar o valor devedor esperado no primeiro dia do contrato como valor de empréstimo daquele cliente.
+
+```py
+# features de vlr_saldo_devedor
+vlr_saldo_devedor_inicial = geral_and_comunicados_sorted_df.drop_duplicates(
+    ["contrato_id"]
+)[["contrato_id", "vlr_saldo_devedor_esperado"]]
+
+c_dsp_dspp_qtd_acoes_devedor = contrato_dsp_dspp_qtd_acoes.merge(
+    right=vlr_saldo_devedor_inicial, how="inner", on="contrato_id"
+)
+
+```
+
+##### Trazendo dados cadastrais
+
+Nossa tabela até o momento possui o `contrato_id` e algumas features que coletamos. Porém, para cruzar com os dados cadastrais dos clientes, vamos precisar também do `nr_documento`.
+
+Para isso criamos uma tabela intermediária que vai nos ajudar a trazer os dados dos clientes para essa base.
+
+```py
+# tabela intermediária
+x_contrato_id_nr_documento = geral_and_comunicados_sorted_df.drop_duplicates(
+    ["contrato_id", "nr_documento"]
+)[["contrato_id", "nr_documento"]]
+
+# trazendo os nr_documentos
+c_dsp_dspp_qtd_acoes_devedor_w_doc = c_dsp_dspp_qtd_acoes_devedor.merge(
+    right=x_contrato_id_nr_documento, how="inner", on="contrato_id"
+)
+
+# alguns nr_documentos estão duplicados por que o cliente
+# pode ter mais de uma loja ou em diferentes regiões
+# por isso estou agrupando os casos onde acontece duplicatas
+clientes_unique_nr_doc = (
+    clientes.groupby("nr_documento")[
+        ["tipo_empresa", "cidade", "estado", "subsegmento", "segmento"]
+    ]
+    .agg(lambda x: list(x) if len(x) > 1 else x)
+    .reset_index()
+)
+
+# etapa final, de fato trazendo os dados dos clientes pra base
+c_dsp_dspp_qtd_acoes_devedor_w_doc_and_clients = c_dsp_dspp_qtd_acoes_devedor_w_doc.merge(
+    right=clientes_unique_nr_doc, on="nr_documento", how="inner"
+)
+
+```
+
+##### + TPV
+
+Agora, vamos trazer a informação do TPV, sumerizado por cliente. Aqui teremos:
+
+- mínimo
+- máximo
+- média
+- mediana
+- soma
+
+Para **quantidade de transação realizada no dia e para o valor do tpv.**
+
+```py
+qtd_trans_tpv = tpv.groupby("nr_documento")[["qtd_transacoes", "vlr_tpv"]].agg(
+    ["mean", "min", "max", np.median, "sum"]
+)
+
+final_df = c_dsp_dspp_qtd_acoes_devedor_w_doc_and_clients.merge(
+    right=qtd_trans_tpv, how="left", on="nr_documento"
+)
+
+# saving our dataset
+final_df.to_csv("data/to_analysis.csv", index=False)
+```
+
+#### 2. Análise Exploratória (Dataset final)
+
+...
 
 #### 3. Limpeza
 
 #### 4. Criação de novas features
-
-- prop_success_dsp: proporção de sucesso das comunicações que fora enviadas, dividida por cada tipo de acionamento dado.
-- total_ideal_dsp: total de vezes que a msg deveria ser enviada ao cliente, por tipo de acionamento.
-- mesma variável de cima, mas por dspp.
-- valor total do crédito
-- todos os dados sobre os clientes
-- score_success_dsp
-- score_success_dspp
-- qtd de entregues, n-entregues e lidas por tipo de acionamento e por tipo de mensagem.
 
 ### Conclusões e Insights
