@@ -627,10 +627,155 @@ final_df.to_csv("data/to_analysis.csv", index=False)
 
 #### 2. Análise Exploratória (Dataset final)
 
-...
+Agora, com nosso novo dataset, nós temos cerca de 41 features as quais podemos utilizar para chegar a conclusão de qual a melhor curva de acionamento do cliente.
 
-#### 3. Limpeza
+Por questão de tempo e disponibilidade, irei focar em duas análises na tentativa de encontrar algum padrão que nos direcione para nosso objetivo. A primeira será uma análise do score_dsp e score_dspp com features de segmento e subsegmento, e em segundo, do score_dsp e score_dspp com features que indicam se as mensagens foram de fato entregues, lidas ou se simplesmente não foram entregues.
 
-#### 4. Criação de novas features
+Vale pontuar aqui que esses scores foram calculado, tirando a média da porcentagem de sucesso ao aplicar uma campanha. E também que poderia muito bom cada uma dessas campanhas possuirem um peso específico, porém nesse primeiro momento vamos considerar todas as campanhas com o mesmo peso.
+
+##### DSP e DSPP pelo Segmento e Subsegmento
+
+Vamos iniciar filtrando o dados para retornar apenas os dados que vamos utilizar.
+
+```py
+# intially by the dsp
+df_filtered = df[["nr_documento", "score_dsp", "segmento"]][
+    (df["segmento"].isin(segmentos)) & (df["subsegmento"].isin(subsegmentos))
+]
+```
+
+Aqui também estamos filtrando pelas categorias nos segmentos e subsegmentos, removendo os casos de `nr_documento` duplicado.
+
+Vamos então analisar um boxplot para cada uma das categorias e ter uma visão de como estão distribuídos os scores.
+
+```py
+fig = px.box(df_filtered, x="segmento", y="score_dsp")
+fig.show()
+```
+
+![boxplot-segmento](imgs/boxplot-segmentos.png)
+
+Com esse gráfico, podemos ver que existe uma variância alta nos dados, e independemente do segmento, existem valores que vão do 0 até o 1. Porém, ao olharmos para a mediana, vemos que `Serviços recorrentes` possuem os valores mais altos desse do `score_dsp`.
+
+Agora, para o subsegmento:
+
+```py
+# intially by the dsp
+df_filtered = df[["nr_documento", "score_dsp", "subsegmento"]][
+    (df["segmento"].isin(segmentos)) & (df["subsegmento"].isin(subsegmentos))
+]
+
+fig = px.box(df_filtered, x="subsegmento", y="score_dsp")
+fig.show()
+```
+
+![boxplot-subseg](imgs/boxplot-subseg.png)
+
+O mesmo comportamento do anteior pode ser visto aqui. Os valores de mediana mais altos estão por conta do subsegmento `Educação`. E setores relacionados a Alimentação, direta ou indiretamente, possuem valores em torno de 0.5 de mediana no `score_dsp`.
+
+Vamos visualizar o mesmo para o dspp:
+
+```py
+df_filtered = df[["nr_documento", "score_dspp", "segmento", "subsegmento"]][
+    (df["segmento"].isin(segmentos)) & (df["subsegmento"].isin(subsegmentos))
+]
+
+fig = px.box(df_filtered, x="segmento", y="score_dspp")
+fig.show()
+
+fig = px.box(df_filtered, x="subsegmento", y="score_dspp")
+fig.show()
+```
+
+![boxplot-subseg](imgs/dspp-boxplot.png)
+![boxplot-subseg](imgs/dspp-boxplot-sugseg.png)
+
+Pelo que vemos aqui, tanto para segmento, quanto para subsegmento, apesar de termos valores oscilando de 0 a 1 em todas as categorias, as medianas aqui são bem menores que no dsp.
+
+Podemos inferir aqui que o score n consegue ser explicado apenas pelo segmento e subsegmento, sendo necessário mais variáveis, vamos seguir para a utilização das features de entrega do acionamento.
+
+### DSP e DSPP pela Entrega do Acionamento
+
+Estou considerando aqui a entrega do acionamento pelas features de:
+
+- ENTREGUE
+- NÃO ENTREGUE
+- LIDO
+
+E, construíndo os boxplots novamente, temos:
+
+```py
+df_filtered = df[
+    ["nr_documento", "score_dsp", "get_entregue", "get_nao_entregue", "get_lido"]
+][(df["segmento"].isin(segmentos)) & (df["subsegmento"].isin(subsegmentos))]
+
+# melting the data
+df_filtered_melted = df_filtered.melt(
+    id_vars=["nr_documento", "score_dsp"],
+    value_vars=["get_entregue", "get_nao_entregue", "get_lido"],
+    var_name="acionamento",
+)
+
+fig = px.box(df_filtered_melted, x="acionamento", y="score_dsp")
+fig.show()
+```
+
+![dsp-acionamento](imgs/dsp-acionamento.png)
+
+Curiosamente, apesar de nada muito útil, não conseguimos ver nenhuma relação entre as variáveis de acionamento e os scores para o dsp.
+
+O mesmo foi feito para o dspp, mas obtive o mesmo resultado, não demonstrando nada muito informativo, por isso o gráfico não foi plotado aqui.
+
+#### 3. Dashboarding
+
+Após realizada a análise acima, cheguei a conclusão que a identificação das melhores features que podem nos ajudar a explicar a melhor curva de acionamento do cliente é um trabalho que existe mais conhecimento de negócio e mais tentativa e erro.
+
+Para otimizar essa análise, irei apresentar um dashboard com alguns filtros e visualizações sobre a mediana do sucesso em cada uma das campanhas, por cliente. Dessa forma conseguimos empoderar os usuários com dados e otimizar a tomada de decisão.
+
+O que teremos de código dentro do dash será como o exibido abaixo:
+
+```py
+# seleção de filtros
+filtro_estado = "SP"
+filtro_cidade = "São Paulo"
+prop_columns = [column for column in df.columns if column.startswith("prop_")]
+
+# aplicação dos filtros
+df_filtered = df[(df["estado"] == filtro_estado) & (df["cidade"] == filtro_cidade)][prop_columns]
+df_melted = df_filtered.melt(value_vars=prop_columns, var_name="props")
+to_plot = df_melted.groupby(["props"])["value"].agg(np.nanmedian).reset_index()
+
+# transformando no tipo Categories, para ordenar o plot
+prop_categories = CategoricalDtype(
+    [
+        "prop_success_dsp5",
+        "prop_success_dsp10",
+        "prop_success_dsp15",
+        "prop_success_dsp30",
+        "prop_success_dsp60",
+        "prop_success_dsp90",
+        "prop_success_dspp15",
+        "prop_success_dspp30",
+        "prop_success_dspp45",
+    ],
+    ordered=True
+)
+to_plot["props"] = to_plot["props"].astype(prop_categories)
+to_plot_sorted = to_plot.sort_values("props")
+
+# plot
+fig = px.bar(to_plot_sorted, x="props", y="value")
+fig.show()
+```
+
+![img-barplot](imgs/barplot-median-props.png)
+
+A interpretação é que, para esse conjunto de clientes, filtrados para São Paulo e também cidade de São Paulo, tivemos uma conversão alta para o dsp5, e a mesma foi declinando até o dsp30. Já para o DSPP, tivemos uma conversão bem baixa, para os casos onde houve esse tipo de acionamento, chegando a 20%.
 
 ### Conclusões e Insights
+
+- Optei por uma solução simples
+- Quantidade de features
+- Limitações de análises descritivas
+- Recomendações
+- Modelo Uplift + Clusterização
