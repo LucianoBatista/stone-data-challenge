@@ -1,0 +1,63 @@
+{
+  "config": {
+    "indexing": "full",
+    "lang": [
+      "en"
+    ],
+    "min_search_length": 3,
+    "prebuild_index": false,
+    "separator": "[\\s\\-]+"
+  },
+  "docs": [
+    {
+      "location": "",
+      "text": "Data Challenge Stone 2022 Para mais informa\u00e7\u00f5es sobre o desafio acesse: LINK Framework de Avalia\u00e7\u00e3o Valida\u00e7\u00f5es iniciais 1. Checks de inconsist\u00eancias nas bases individuais Fluxo de etapas realizadas 1. Tratamento Qualquer 2. Cruzamento nos dados 3. Limpeza Conclus\u00f5es e Insights",
+      "title": "Framework de Avalia\u00e7\u00e3o"
+    },
+    {
+      "location": "#data-challenge-stone-2022",
+      "text": "Para mais informa\u00e7\u00f5es sobre o desafio acesse: LINK",
+      "title": "Data Challenge Stone 2022"
+    },
+    {
+      "location": "#framework-de-avaliacao",
+      "text": "",
+      "title": "Framework de Avalia\u00e7\u00e3o"
+    },
+    {
+      "location": "#validacoes-iniciais",
+      "text": "",
+      "title": "Valida\u00e7\u00f5es iniciais"
+    },
+    {
+      "location": "#1-checks-de-inconsistencias-nas-bases-individuais",
+      "text": "",
+      "title": "1. Checks de inconsist\u00eancias nas bases individuais"
+    },
+    {
+      "location": "#fluxo-de-etapas-realizadas",
+      "text": "",
+      "title": "Fluxo de etapas realizadas"
+    },
+    {
+      "location": "#1-tratamento-qualquer",
+      "text": "",
+      "title": "1. Tratamento Qualquer"
+    },
+    {
+      "location": "#2-cruzamento-nos-dados",
+      "text": "",
+      "title": "2. Cruzamento nos dados"
+    },
+    {
+      "location": "#3-limpeza",
+      "text": "",
+      "title": "3. Limpeza"
+    },
+    {
+      "location": "#conclusoes-e-insights",
+      "text": "",
+      "title": "Conclus\u00f5es e Insights"
+    }
+  ]
+}
