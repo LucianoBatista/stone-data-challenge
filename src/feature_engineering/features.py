@@ -1,5 +1,3 @@
-import ast
-
 import pandas as pd
 
 
@@ -447,8 +445,7 @@ def get_entregue(data: pd.Series):
     entregue = []
 
     for item in data.values:
-        if isinstance(item, str):
-            item = ast.literal_eval(item)
+        if isinstance(item, list):
             # not considering first length 4 item lists
             for i in item:
                 if i == "ENTREGUE":
@@ -462,8 +459,7 @@ def get_nao_entregue(data: pd.Series):
     nao_entregue = []
 
     for item in data.values:
-        if isinstance(item, str):
-            item = ast.literal_eval(item)
+        if isinstance(item, list):
             # not considering first length 4 item lists
             for i in item:
                 if i == "NAO ENTREGUE":
@@ -477,8 +473,7 @@ def get_lido(data: pd.Series):
     lido = []
 
     for item in data.values:
-        if isinstance(item, str):
-            item = ast.literal_eval(item)
+        if isinstance(item, list):
             # not considering first length 4 item lists
             for i in item:
                 if i == "LIDO":
