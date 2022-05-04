@@ -37,6 +37,6 @@ Agora, basta executar a linha de comando abaixo:
 - `cd dash`
 - `python app.py`
 
-Pronto, se tudo correu bem, o dashboard vai estar online no localhost:8050, e terá uma interface como a seguinte imagem:
+Pronto, se tudo correu bem, o dashboard vai estar online no [localhost:8050](http://localhost:8050), e terá uma interface como a seguinte imagem:
 
 ![dash-header](docs/imgs/dash-header.png)
