@@ -1,0 +1,639 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.11">
+    
+    
+      
+        <title>Dicionário de Dados - Stone Data Challenge</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.8c5ef100.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.9647289d.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#4cae4f">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="green" data-md-color-accent="green">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dicionario-de-dados" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Stone Data Challenge" class="md-header__button md-logo" aria-label="Stone Data Challenge" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Stone Data Challenge
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dicionário de Dados
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Stone Data Challenge" class="md-nav__button md-logo" aria-label="Stone Data Challenge" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    Stone Data Challenge
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Framework de Avaliação
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Dicionário de Dados
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Dicionário de Dados
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio_geral" class="md-nav__link">
+    portfolio_geral
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio_tpv" class="md-nav__link">
+    portfolio_tpv
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio_comunicados" class="md-nav__link">
+    portfolio_comunicados
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio_clientes" class="md-nav__link">
+    portfolio_clientes
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio_geral" class="md-nav__link">
+    portfolio_geral
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio_tpv" class="md-nav__link">
+    portfolio_tpv
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio_comunicados" class="md-nav__link">
+    portfolio_comunicados
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#portfolio_clientes" class="md-nav__link">
+    portfolio_clientes
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="dicionario-de-dados">Dicionário de Dados</h1>
+<p>Diagrama de Entidade-Relacionamento para demonstrar como as bases estão relacionadas.</p>
+<p><img alt="erm-diagram" src="../imgs/erm-diagram.png" /></p>
+<h2 id="portfolio_geral"><code>portfolio_geral</code></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>contrato_id</td>
+<td>string</td>
+<td>Identificador único do contrato de um cliente.</td>
+</tr>
+<tr>
+<td>dt_ref_portfolio</td>
+<td>date</td>
+<td>Data de referência da base de portfolio, representa a qual data um determinado registro/linha corresponde.</td>
+</tr>
+<tr>
+<td>safra</td>
+<td>date</td>
+<td>Mês que o contrato foi originado (desembolsado).</td>
+</tr>
+<tr>
+<td>nr_documento</td>
+<td>string</td>
+<td>Número do documento do cliente.</td>
+</tr>
+<tr>
+<td>status_contrato</td>
+<td>string</td>
+<td>Estado atual do empréstimo, podendo ser "Desembolso confirmado (DisbursementConfirmed), Aceito (Accepted), Desembolso solicitado (DisbursementRequested), Ativo (Active) ou Quitado (Settled)".</td>
+</tr>
+<tr>
+<td>dt_contrato</td>
+<td>date</td>
+<td>Data de criação do empréstimo.</td>
+</tr>
+<tr>
+<td>dt_desembolso</td>
+<td>date</td>
+<td>Data de desembolso do empréstimo, onde de fato liberamos o valor tomado na conta do cliente.</td>
+</tr>
+<tr>
+<td>dt_vencimento</td>
+<td>date</td>
+<td>Data de vencimento do contrato.</td>
+</tr>
+<tr>
+<td>dt_wo</td>
+<td>date</td>
+<td>Data de write-off do contrato onde, caso o cliente não evolua com o pagamento, o contrato é declarado como perda.</td>
+</tr>
+<tr>
+<td>prazo</td>
+<td>bigint</td>
+<td>Prazo/parcelas do contrato da linha de crédito, geralmente o prazo médio é de 8 meses.</td>
+</tr>
+<tr>
+<td>vlr_desembolsado</td>
+<td>decimal (15,2)</td>
+<td>Valor contratado no empréstimo.</td>
+</tr>
+<tr>
+<td>vlr_tarifa</td>
+<td>decimal (15,2)</td>
+<td>Tarifa de contratação (representa 1% do valor do empréstimo).</td>
+</tr>
+<tr>
+<td>vlr_pgto_esperado</td>
+<td>decimal (15,2)</td>
+<td>Representa o valor de pagamento esperado de um contrato dado suas características. É resultado do cálculo (juros_diario + iof_diario, (dt_vencimento - dt_desembolso).days, vlr_desembolsado + vlr_tarifa + iof_inicial).</td>
+</tr>
+<tr>
+<td>juros_mes</td>
+<td>decimal (15,2)</td>
+<td>Taxa de juros ao mês (% am).</td>
+</tr>
+<tr>
+<td>juros_diario</td>
+<td>decimal (15,2)</td>
+<td>Taxa de juros nominal do contrato representada por valor diário = (1 + juros_mes) ^ (1 / 30) - 1.</td>
+</tr>
+<tr>
+<td>perc_retencao</td>
+<td>decimal (15,2)</td>
+<td>Percentual retido diariamente sobre as liquidações do cliente que será revertida no pagamento do contrato dia após dia (quando houver TPV).</td>
+</tr>
+<tr>
+<td>vlr_pgto_realizado</td>
+<td>decimal (15,2)</td>
+<td>Valor do pagamento diário contabilizado de um cliente.</td>
+</tr>
+<tr>
+<td>vlr_saldo_devedor</td>
+<td>decimal (15,2)</td>
+<td>Valor devedor atualizado atual do contrato, considerando pagamentos, acúmulo de juros e encargos do mesmo.</td>
+</tr>
+<tr>
+<td>vlr_saldo_devedor_esperado</td>
+<td>decimal (15,2)</td>
+<td>Valor devedor esperado do contrato dado o ritmo de pagamento previsto para o mesmo, considerando pagamentos, acumulo de juros e encargos do mesmo.</td>
+</tr>
+<tr>
+<td>dspp</td>
+<td>bigint</td>
+<td>Contagem de dias consecutivos sem amortização do saldo principal. A contagem é sempre zero quando há amortização do principal. Então se um cliente esta há 50 dias sem amortizar o mínimo e no dia seguinte amortiza o principal (qualquer valor), a contagem reseta.</td>
+</tr>
+<tr>
+<td>dsp</td>
+<td>bigint</td>
+<td>Contagem de dias consecutivos sem qualquer pagamento realizado.</td>
+</tr>
+<tr>
+<td>flag_transacao</td>
+<td>int</td>
+<td>Flag indicado se, na data de referência, houve algum valor transacionado na maquininha do cliente (TPV).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="portfolio_tpv"><code>portfolio_tpv</code></h2>
+<table>
+<thead>
+<tr>
+<th>Features</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nr_documento</td>
+<td>string</td>
+<td>Número do documento do cliente.</td>
+</tr>
+<tr>
+<td>dt_transacao</td>
+<td>string</td>
+<td>Campo que indica a data que houve algum valor transacionado na maquininha do cliente.</td>
+</tr>
+<tr>
+<td>qtd_transacoes</td>
+<td>bigint</td>
+<td>Campo que indica a quantidade de transações registradas na maquininha do cliente em determinada data.</td>
+</tr>
+<tr>
+<td>vlr_tpv</td>
+<td>double</td>
+<td>Este campo se refere ao valor total transacionado na maquininha do cliente.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="portfolio_comunicados"><code>portfolio_comunicados</code></h2>
+<table>
+<thead>
+<tr>
+<th>Features</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>contrato_id</td>
+<td>string</td>
+<td>Identificador único do contrato de um cliente.</td>
+</tr>
+<tr>
+<td>dt_ref_portfolio</td>
+<td>date</td>
+<td>Data de referência da base de portfolio, representa a qual data um determinado registro/linha corresponde.</td>
+</tr>
+<tr>
+<td>data_acao</td>
+<td>date</td>
+<td>A data que uma ação de comunicação foi executada e enviada para o cliente.</td>
+</tr>
+<tr>
+<td>tipo_acao</td>
+<td>string</td>
+<td>Qual é o tipo da ação de comunicação executada.</td>
+</tr>
+<tr>
+<td>acao</td>
+<td>string</td>
+<td>Tipo da ação de comunicação utilizada pelo time de cobrança para identificar qual foi a campanha executada. Representa em qual momento da régua determinado contrato esta.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>string</td>
+<td>Status atualizado da comunicação enviada, podendo ser 'Enviado', 'Não entregue', 'Lido', 'Respondido'.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="portfolio_clientes"><code>portfolio_clientes</code></h2>
+<table>
+<thead>
+<tr>
+<th>Features</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>nr_documento</td>
+<td>string</td>
+<td>Número do documento do cliente.</td>
+</tr>
+<tr>
+<td>tipo_empresa</td>
+<td>string</td>
+<td>Representa o tipo de empresa que corresponde do cliente MEI, CPF, CNPJ.</td>
+</tr>
+<tr>
+<td>cidade</td>
+<td>string</td>
+<td>Cidade de origem do cliente que contratou o produto de crédito.</td>
+</tr>
+<tr>
+<td>estado</td>
+<td>string</td>
+<td>Estado de origem (UF) do cliente que contratou o produto de crédito.</td>
+</tr>
+<tr>
+<td>subsegmento</td>
+<td>string</td>
+<td>Micro segmento de negócio em que o cliente está inserido.</td>
+</tr>
+<tr>
+<td>segmento</td>
+<td>string</td>
+<td>Macro segmento de negócio em que o cliente está inserido.</td>
+</tr>
+</tbody>
+</table>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Framework de Avaliação" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Framework de Avaliação
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate"], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.748e2769.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js"></script>
+      
+        <script src="../javascripts/tablesort.js"></script>
+      
+    
+  </body>
+</html>
