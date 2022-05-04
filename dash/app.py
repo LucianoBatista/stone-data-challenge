@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import plotly.express as px
 from pandas import CategoricalDtype
 
 from dash import Dash, dcc, html
@@ -53,11 +54,6 @@ app.layout = html.Div(
                         html.Div(children="Cidade", className="menu-title"),
                         dcc.Dropdown(
                             id="cidade-filter",
-                            options=[
-                                {"label": cidade, "value": cidade}
-                                for cidade in np.sort(data.cidade.unique())
-                            ],
-                            value="São Paulo",
                             clearable=False,
                             className="dropdown",
                         ),
@@ -161,26 +157,14 @@ def update_charts(estado, cidade, segmento, subsegmento):
     to_plot["props"] = to_plot["props"].astype(prop_categories)
     to_plot_sorted = to_plot.sort_values("props")
 
-    boxplot_chart_figure = {
-        "data": [
-            {
-                "x": to_plot_sorted["props"],
-                "y": to_plot_sorted["value"],
-                "type": "bar",
-                "hovertemplate": "%{y:.2f}<extra></extra>",
-            },
-        ],
-        "layout": {
-            "title": {
-                "text": "Valor médio do total de clientes pelos filtros aplicados.",
-                "x": 0.05,
-                "xanchor": "left",
-            },
-            "xaxis": {"fixedrange": True},
-            "yaxis": {"fixedrange": True},
-            "colorway": ["#17B897"],
-        },
-    }
+    boxplot_chart_figure = px.box(
+        df_melted,
+        x="props",
+        y="value",
+        title="Distribuição de scores nos dados para os filtros aplicados acima.",
+        color="props",
+    )
+    boxplot_chart_figure.update_layout(showlegend=False)
 
     barplot_chart_figure = {
         "data": [
@@ -199,10 +183,18 @@ def update_charts(estado, cidade, segmento, subsegmento):
             },
             "xaxis": {"fixedrange": True},
             "yaxis": {"fixedrange": True},
-            "colorway": ["#E12D39"],
+            "colorway": ["#00008b"],
         },
     }
     return boxplot_chart_figure, barplot_chart_figure
+
+
+@app.callback(Output("cidade-filter", "options"), [Input("estado-filter", "value")])
+def update_date_dropdown(estado):
+
+    df_filtered = data[data["estado"] == estado]
+
+    return [{"label": i, "value": i} for i in df_filtered.cidade.unique()]
 
 
 if __name__ == "__main__":
