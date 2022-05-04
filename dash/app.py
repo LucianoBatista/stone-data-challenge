@@ -1,12 +1,11 @@
 import numpy as np
 import pandas as pd
+from pandas import CategoricalDtype
 
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 
-data = pd.read_csv("../data/avocado.csv")
-data["Date"] = pd.to_datetime(data["Date"], format="%Y-%m-%d")
-data.sort_values("Date", inplace=True)
+data = pd.read_csv("../data/to_analysis.csv")
 
 external_stylesheets = [
     {
@@ -17,18 +16,16 @@ external_stylesheets = [
 ]
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
-app.title = "Avocado Analytics: Understand Your Avocados!"
+app.title = "Stone - Data Challenge"
 
 app.layout = html.Div(
     children=[
         html.Div(
             children=[
-                html.P(children="🥑", className="header-emoji"),
-                html.H1(children="Avocado Analytics", className="header-title"),
+                html.P(children="👾", className="header-emoji"),
+                html.H1(children="Stone - Data Challenge", className="header-title"),
                 html.P(
-                    children="Analyze the behavior of avocado prices"
-                    " and the number of avocados sold in the US"
-                    " between 2015 and 2018",
+                    children="Entendendo a melhor curva de acionamento ao cliente.",
                     className="header-description",
                 ),
             ],
@@ -38,14 +35,14 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     children=[
-                        html.Div(children="Region", className="menu-title"),
+                        html.Div(children="Estado", className="menu-title"),
                         dcc.Dropdown(
-                            id="region-filter",
+                            id="estado-filter",
                             options=[
-                                {"label": region, "value": region}
-                                for region in np.sort(data.region.unique())
+                                {"label": estado, "value": estado}
+                                for estado in np.sort(data.estado.unique())
                             ],
-                            value="Albany",
+                            value="SP",
                             clearable=False,
                             className="dropdown",
                         ),
@@ -53,14 +50,29 @@ app.layout = html.Div(
                 ),
                 html.Div(
                     children=[
-                        html.Div(children="Type", className="menu-title"),
+                        html.Div(children="Cidade", className="menu-title"),
                         dcc.Dropdown(
-                            id="type-filter",
+                            id="cidade-filter",
                             options=[
-                                {"label": avocado_type, "value": avocado_type}
-                                for avocado_type in data.type.unique()
+                                {"label": cidade, "value": cidade}
+                                for cidade in np.sort(data.cidade.unique())
                             ],
-                            value="organic",
+                            value="São Paulo",
+                            clearable=False,
+                            className="dropdown",
+                        ),
+                    ]
+                ),
+                html.Div(
+                    children=[
+                        html.Div(children="Segmento", className="menu-title"),
+                        dcc.Dropdown(
+                            id="segmento-filter",
+                            options=[
+                                {"label": segmento, "value": segmento}
+                                for segmento in data.segmento.unique()
+                            ],
+                            value="Alimentação",
                             clearable=False,
                             searchable=False,
                             className="dropdown",
@@ -69,15 +81,19 @@ app.layout = html.Div(
                 ),
                 html.Div(
                     children=[
-                        html.Div(children="Date Range", className="menu-title"),
-                        dcc.DatePickerRange(
-                            id="date-range",
-                            min_date_allowed=data.Date.min().date(),
-                            max_date_allowed=data.Date.max().date(),
-                            start_date=data.Date.min().date(),
-                            end_date=data.Date.max().date(),
+                        html.Div(children="Sub Segmento", className="menu-title"),
+                        dcc.Dropdown(
+                            id="subsegmento-filter",
+                            options=[
+                                {"label": subsegmento, "value": subsegmento}
+                                for subsegmento in data.subsegmento.unique()
+                            ],
+                            value="Alimentação Rápida",
+                            clearable=False,
+                            searchable=False,
+                            className="dropdown",
                         ),
-                    ]
+                    ],
                 ),
             ],
             className="menu",
@@ -86,14 +102,14 @@ app.layout = html.Div(
             children=[
                 html.Div(
                     children=dcc.Graph(
-                        id="price-chart",
+                        id="boxplot-chart",
                         config={"displayModeBar": False},
                     ),
                     className="card",
                 ),
                 html.Div(
                     children=dcc.Graph(
-                        id="volume-chart",
+                        id="barplot-chart",
                         config={"displayModeBar": False},
                     ),
                     className="card",
@@ -106,59 +122,87 @@ app.layout = html.Div(
 
 
 @app.callback(
-    [Output("price-chart", "figure"), Output("volume-chart", "figure")],
+    [Output("boxplot-chart", "figure"), Output("barplot-chart", "figure")],
     [
-        Input("region-filter", "value"),
-        Input("type-filter", "value"),
-        Input("date-range", "start_date"),
-        Input("date-range", "end_date"),
+        Input("estado-filter", "value"),
+        Input("cidade-filter", "value"),
+        Input("segmento-filter", "value"),
+        Input("subsegmento-filter", "value"),
     ],
 )
-def update_charts(region, avocado_type, start_date, end_date):
+def update_charts(estado, cidade, segmento, subsegmento):
     mask = (
-        (data.region == region)
-        & (data.type == avocado_type)
-        & (data.Date >= start_date)
-        & (data.Date <= end_date)
+        (data.estado == estado)
+        & (data.cidade == cidade)
+        & (data.segmento == segmento)
+        & (data.subsegmento == subsegmento)
     )
-    filtered_data = data.loc[mask, :]
-    price_chart_figure = {
+
+    prop_columns = [column for column in data.columns if column.startswith("prop_")]
+
+    df_filtered = data.loc[mask, :][prop_columns]
+    df_melted = df_filtered.melt(value_vars=prop_columns, var_name="props")
+    to_plot = df_melted.groupby(["props"])["value"].agg(np.nanmedian).reset_index()
+
+    prop_categories = CategoricalDtype(
+        [
+            "prop_success_dsp5",
+            "prop_success_dsp10",
+            "prop_success_dsp15",
+            "prop_success_dsp30",
+            "prop_success_dsp60",
+            "prop_success_dsp90",
+            "prop_success_dspp15",
+            "prop_success_dspp30",
+            "prop_success_dspp45",
+        ],
+        ordered=True,
+    )
+    to_plot["props"] = to_plot["props"].astype(prop_categories)
+    to_plot_sorted = to_plot.sort_values("props")
+
+    boxplot_chart_figure = {
         "data": [
             {
-                "x": filtered_data["Date"],
-                "y": filtered_data["AveragePrice"],
-                "type": "lines",
-                "hovertemplate": "$%{y:.2f}<extra></extra>",
+                "x": to_plot_sorted["props"],
+                "y": to_plot_sorted["value"],
+                "type": "bar",
+                "hovertemplate": "%{y:.2f}<extra></extra>",
             },
         ],
         "layout": {
             "title": {
-                "text": "Average Price of Avocados",
+                "text": "Valor médio do total de clientes pelos filtros aplicados.",
                 "x": 0.05,
                 "xanchor": "left",
             },
             "xaxis": {"fixedrange": True},
-            "yaxis": {"tickprefix": "$", "fixedrange": True},
+            "yaxis": {"fixedrange": True},
             "colorway": ["#17B897"],
         },
     }
 
-    volume_chart_figure = {
+    barplot_chart_figure = {
         "data": [
             {
-                "x": filtered_data["Date"],
-                "y": filtered_data["Total Volume"],
-                "type": "lines",
+                "x": to_plot_sorted["props"],
+                "y": to_plot_sorted["value"],
+                "type": "bar",
+                "hovertemplate": "%{y:.2f}<extra></extra>",
             },
         ],
         "layout": {
-            "title": {"text": "Avocados Sold", "x": 0.05, "xanchor": "left"},
+            "title": {
+                "text": "Valor médio do total de clientes pelos filtros aplicados.",
+                "x": 0.05,
+                "xanchor": "left",
+            },
             "xaxis": {"fixedrange": True},
             "yaxis": {"fixedrange": True},
             "colorway": ["#E12D39"],
         },
     }
-    return price_chart_figure, volume_chart_figure
+    return boxplot_chart_figure, barplot_chart_figure
 
 
 if __name__ == "__main__":
