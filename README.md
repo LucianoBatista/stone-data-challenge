@@ -29,8 +29,11 @@ Segue um link que vai te ajudar a configurar o `make` no windows: [link](https:/
 
 Um outro pré-requesito, como o projeto utiliza `Poetry` como gerenciador de pacotes, é preciso que você tenha-o instalado no ambiente python atual, antes de emular o ambiente virtual (o `Makefile` vai fazer isso pra você).
 
+1. `mkdir stone-data-challenge`
+1. `cd stone-data-challenge`
+1. `git clone git@github.com:LucianoBatista/stone-data-challenge.git .`
 1. `pip install poetry`
-2. `make setup`
+1. `make setup`
 
 ## Iniciando o dashboard
 
