@@ -4,6 +4,10 @@ O Data Challenge da Stone é um desafio de dados com o objetivo de impulsionar o
 
 O evento quer conectar profissionais e entusiastas do universo de dados e analytics, através da abordagem de problemas reais que você encontrará no meio corporativo, sendo também uma oportunidade de treinar e desafiar seus conhecimentos. E tudo isso concorrendo a prêmios incríveis!
 
+## Documentação
+
+Utilizei o `mkdocs` para documentar o projeto, e o mesmo possui o Framework de Avaliação solicitado pela Stone. Basta clicar nesse [link](https://lucianobatista.github.io/stone-data-challenge/) para ter acesso à todo o material.
+
 ## Estrutura do projeto
 
 Como temos alguns diretórios no projeto, achei válido descrever aqui como as coisas estão separadas:
