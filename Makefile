@@ -9,7 +9,6 @@ activate:
 
 download:
 	@echo "Downloading the data..."
-	rm -r data/
 	mkdir data
 	cd data/ && { curl -O https://stone-data-challenge.s3.amazonaws.com/portfolio_clientes.csv ; cd -; }
 	cd data/ && { curl -O https://stone-data-challenge.s3.amazonaws.com/portfolio_comunicados.csv ; cd -; }
