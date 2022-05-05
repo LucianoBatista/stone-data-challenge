@@ -369,23 +369,17 @@
 
 </li>
 
-      </ul>
-    </nav>
-
-</li>
-
-      </ul>
-    </nav>
-
-</li>
-
           <li class="md-nav__item">
   <a href="#dsp-e-dspp-pela-entrega-do-acionamento" class="md-nav__link">
     DSP e DSPP pela Entrega do Acionamento
   </a>
 
-    <nav class="md-nav" aria-label="DSP e DSPP pela Entrega do Acionamento">
-      <ul class="md-nav__list">
+</li>
+
+      </ul>
+    </nav>
+
+</li>
 
           <li class="md-nav__item">
   <a href="#3-dashboarding" class="md-nav__link">
@@ -614,23 +608,17 @@
 
 </li>
 
-      </ul>
-    </nav>
-
-</li>
-
-      </ul>
-    </nav>
-
-</li>
-
           <li class="md-nav__item">
   <a href="#dsp-e-dspp-pela-entrega-do-acionamento" class="md-nav__link">
     DSP e DSPP pela Entrega do Acionamento
   </a>
 
-    <nav class="md-nav" aria-label="DSP e DSPP pela Entrega do Acionamento">
-      <ul class="md-nav__list">
+</li>
+
+      </ul>
+    </nav>
+
+</li>
 
           <li class="md-nav__item">
   <a href="#3-dashboarding" class="md-nav__link">
@@ -672,7 +660,7 @@
 
 <h1 id="data-challenge-stone-2022">Data Challenge Stone 2022</h1>
 <p><img alt="header" src="imgs/header-challenge.png" /></p>
-<p>O objetivo dessa página é servir de documnetação de todo o processo de análise realizado na base fornecida pela Stone. Aqui será registrado o Framework de Avaliação que foi solicitado pela Stone.</p>
+<p>O objetivo dessa página é servir de documnetação de todo o processo de análise realizado na base fornecida pela Stone. Aqui será registrado o Framework de Avaliação.</p>
 <p>Para mais informações sobre o desafio acesse: <a href="https://lp.stone.com.br/stone-data-challenge/">LINK</a>.</p>
 <h2 id="framework-de-avaliacao">Framework de Avaliação</h2>
 <p>A minha análise sobre os dados da Stone segue <em>duas grandes etapas</em>. Primeiramente foi realizado uma análise mais descritiva dos dados, com o objetivo de conhecer detalhes dos dados e possíveis inconsistências. E posteriormente, uma análise mais direcionada para resolução do problema.</p>
@@ -680,10 +668,10 @@
 <h3 id="validacoes-iniciais">Validações iniciais</h3>
 <p>Como dito anteriormente, nesta etapa foi realizada uma análise descritiva das bases que estão disponíveis para trabalhar. Nesse caso nós tempos:</p>
 <ul>
-<li>portfolio_clientes</li>
-<li>portfolio_comunicados</li>
-<li>portfolio_geral</li>
-<li>portfolio_tpv</li>
+<li><code>portfolio_clientes</code></li>
+<li><code>portfolio_comunicados</code></li>
+<li><code>portfolio_geral</code></li>
+<li><code>portfolio_tpv</code></li>
 </ul>
 <div class="highlight"><pre><span></span><code><span class="c1"># libs</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -1463,7 +1451,7 @@
 <img alt="boxplot-subseg" src="imgs/dspp-boxplot-sugseg.png" /></p>
 <p>Pelo que vemos aqui, tanto para segmento, quanto para subsegmento, apesar de termos valores oscilando de 0 a 1 em todas as categorias, as medianas aqui são bem menores que no dsp.</p>
 <p>Podemos inferir aqui que o score n consegue ser explicado apenas pelo segmento e subsegmento, sendo necessário mais variáveis, vamos seguir para a utilização das features de entrega do acionamento.</p>
-<h3 id="dsp-e-dspp-pela-entrega-do-acionamento">DSP e DSPP pela Entrega do Acionamento</h3>
+<h5 id="dsp-e-dspp-pela-entrega-do-acionamento">DSP e DSPP pela Entrega do Acionamento</h5>
 <p>Estou considerando aqui a entrega do acionamento pelas features de:</p>
 <ul>
 <li>ENTREGUE</li>
@@ -1527,13 +1515,14 @@
 <p><img alt="img-barplot" src="imgs/barplot-median-props.png" /></p>
 <p>A interpretação é que, para esse conjunto de clientes, filtrados para São Paulo e também cidade de São Paulo, tivemos uma conversão alta para o dsp5, e a mesma foi declinando até o dsp30. Já para o DSPP, tivemos uma conversão bem baixa, para os casos onde houve esse tipo de acionamento, chegando a 20%.</p>
 <h3 id="conclusoes-e-insights">Conclusões e Insights</h3>
-<ul>
-<li>Optei por uma solução simples</li>
-<li>Quantidade de features</li>
-<li>Limitações de análises descritivas</li>
-<li>Recomendações</li>
-<li>Modelo Uplift + Clusterização</li>
-</ul>
+<p>Optei nesse projeto por uma abordagem mais simples, que consistiu uma análise descritiva seguido de uma sumerização dos dados, levando em consideração cada um dos contratos e clientes presentes na base.</p>
+<p>O objetivo foi de conseguir <strong>insights iniciais que possam nortear melhor a tomada de decisão</strong> sobre qual a melhor curva de acionamento do cliente.</p>
+<p>Nesse quesito, cheguei em um score de sucesso de cada um dos acionamentos direcionados ao cliente. Porém, esse score sozinho não é suficiente para obtermos a melhor curva de acionamento, e o mesmo precisa ser cruzado com outras features (<em>segunda etapa de análise do projeto</em>).</p>
+<p>Ao final dessa segunda etapa, nosso dataset possuia 41 features, e isso foi inevitável dada a complexidade e nuances presentes no dados. Devido a isso, acredito que simples análises descritivas esbarram na limitação de quantas variáveis conseguimos visualizar e buscar por padrões.</p>
+<p>O que deixa claro que esse é um problema que pode ser facilmente abordado como um problema de recomendação, com base em todas as features criadas nesse processo de análise de dados.</p>
+<p>Outro ponto importante é trazer para esse problema o conceito de <strong>experimentação</strong>, para possibilitar a utilização de <em>modelos de Uplift</em>, e assim saber de fato qual grupo de clientes devem ser abordados com os acionamentos.</p>
+<p>Infelizmente não consegui chegar a uma curva ideal, mas pude compreender que esse problema que pode ser abordado levando em consideração a realidade de cada cliente presente na base, deixando o atendimento mais personalisado.</p>
+<p>Gostaria de finalizar agradecendo a oportunidade fornecida pela Stone em estar participando e aprendendo muito com esse desafio.</p>
 
 
             </article>
