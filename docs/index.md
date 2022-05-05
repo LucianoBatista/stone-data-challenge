@@ -2,7 +2,7 @@
 
 ![header](imgs/header-challenge.png)
 
-O objetivo dessa página é servir de documnetação de todo o processo de análise realizado na base fornecida pela Stone. Aqui será registrado o Framework de Avaliação que foi solicitado pela Stone.
+O objetivo dessa página é servir de documnetação de todo o processo de análise realizado na base fornecida pela Stone. Aqui será registrado o Framework de Avaliação.
 
 Para mais informações sobre o desafio acesse: [LINK](https://lp.stone.com.br/stone-data-challenge/).
 
@@ -16,10 +16,10 @@ Nas **validações iniciais** será registrado a etapa descritiva, e em **fluxo 
 
 Como dito anteriormente, nesta etapa foi realizada uma análise descritiva das bases que estão disponíveis para trabalhar. Nesse caso nós tempos:
 
-- portfolio_clientes
-- portfolio_comunicados
-- portfolio_geral
-- portfolio_tpv
+- `portfolio_clientes`
+- `portfolio_comunicados`
+- `portfolio_geral`
+- `portfolio_tpv`
 
 ```python
 # libs
@@ -694,7 +694,7 @@ Pelo que vemos aqui, tanto para segmento, quanto para subsegmento, apesar de ter
 
 Podemos inferir aqui que o score n consegue ser explicado apenas pelo segmento e subsegmento, sendo necessário mais variáveis, vamos seguir para a utilização das features de entrega do acionamento.
 
-### DSP e DSPP pela Entrega do Acionamento
+##### DSP e DSPP pela Entrega do Acionamento
 
 Estou considerando aqui a entrega do acionamento pelas features de:
 
@@ -774,8 +774,18 @@ A interpretação é que, para esse conjunto de clientes, filtrados para São Pa
 
 ### Conclusões e Insights
 
-- Optei por uma solução simples
-- Quantidade de features
-- Limitações de análises descritivas
-- Recomendações
-- Modelo Uplift + Clusterização
+Optei nesse projeto por uma abordagem mais simples, que consistiu uma análise descritiva seguido de uma sumerização dos dados, levando em consideração cada um dos contratos e clientes presentes na base.
+
+O objetivo foi de conseguir **insights iniciais que possam nortear melhor a tomada de decisão** sobre qual a melhor curva de acionamento do cliente.
+
+Nesse quesito, cheguei em um score de sucesso de cada um dos acionamentos direcionados ao cliente. Porém, esse score sozinho não é suficiente para obtermos a melhor curva de acionamento, e o mesmo precisa ser cruzado com outras features (_segunda etapa de análise do projeto_).
+
+Ao final dessa segunda etapa, nosso dataset possuia 41 features, e isso foi inevitável dada a complexidade e nuances presentes no dados. Devido a isso, acredito que simples análises descritivas esbarram na limitação de quantas variáveis conseguimos visualizar e buscar por padrões.
+
+O que deixa claro que esse é um problema que pode ser facilmente abordado como um problema de recomendação, com base em todas as features criadas nesse processo de análise de dados.
+
+Outro ponto importante é trazer para esse problema o conceito de **experimentação**, para possibilitar a utilização de _modelos de Uplift_, e assim saber de fato qual grupo de clientes devem ser abordados com os acionamentos.
+
+Infelizmente não consegui chegar a uma curva ideal, mas pude compreender que esse problema que pode ser abordado levando em consideração a realidade de cada cliente presente na base, deixando o atendimento mais personalisado.
+
+Gostaria de finalizar agradecendo a oportunidade fornecida pela Stone em estar participando e aprendendo muito com esse desafio.
