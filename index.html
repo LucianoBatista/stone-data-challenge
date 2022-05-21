@@ -315,6 +315,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#quebra-entre-o-dsp-e-o-dspp" class="md-nav__link">
+    Quebra entre o DSP e o DSPP
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#criacao-de-features-de-dsp-e-dspp" class="md-nav__link">
     Criação de features de DSP e DSPP
   </a>
@@ -369,9 +376,29 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
-  <a href="#dsp-e-dspp-pela-entrega-do-acionamento" class="md-nav__link">
-    DSP e DSPP pela Entrega do Acionamento
+  <a href="#3-clusterizacao" class="md-nav__link">
+    3. Clusterização
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Clusterização">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dsp" class="md-nav__link">
+    DSP
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dspp" class="md-nav__link">
+    DSPP
   </a>
   
 </li>
@@ -554,6 +581,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#quebra-entre-o-dsp-e-o-dspp" class="md-nav__link">
+    Quebra entre o DSP e o DSPP
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#criacao-de-features-de-dsp-e-dspp" class="md-nav__link">
     Criação de features de DSP e DSPP
   </a>
@@ -608,9 +642,29 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+        
           <li class="md-nav__item">
-  <a href="#dsp-e-dspp-pela-entrega-do-acionamento" class="md-nav__link">
-    DSP e DSPP pela Entrega do Acionamento
+  <a href="#3-clusterizacao" class="md-nav__link">
+    3. Clusterização
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Clusterização">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dsp" class="md-nav__link">
+    DSP
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dspp" class="md-nav__link">
+    DSPP
   </a>
   
 </li>
@@ -1271,6 +1325,16 @@
     <span class="p">[</span><span class="s2">&quot;contrato_id&quot;</span><span class="p">,</span> <span class="s2">&quot;dt_ref_portfolio&quot;</span><span class="p">]</span>
 <span class="p">)</span>
 </code></pre></div>
+<h5 id="quebra-entre-o-dsp-e-o-dspp">Quebra entre o DSP e o DSPP</h5>
+<p>Detalhes nesse tópico podem ser investigados no arquivo <code>final_composition_v2.ipynb</code>, mas o objetivo aqui é desconsiderar (antes de realizar o cálculo), os acionamentos que acabaram não sendo entregues.</p>
+<p>Nesse procedimento, foram gerados pesos para os tipos de acionamentos:</p>
+<ul>
+<li>Não entregue = 0</li>
+<li>Entregue = 1</li>
+<li>Lido = 2</li>
+<li>Respondido = 3</li>
+</ul>
+<p>Isso nos possibilitou também a criar uma nova feature, que oscila entre 1 e 3. Quanto mais próximo de 3, mais engajado o cliente está em ler e/ou responder aos acionamentos.</p>
 <h5 id="criacao-de-features-de-dsp-e-dspp">Criação de features de DSP e DSPP</h5>
 <p>Aqui está uma <strong>etapa muito importante</strong> do fluxo da análise dos dados. Uma informação que precisamos ter para prosseguir com a análise é <strong>se os acionamentos foram efetivos</strong> para retornar o cliente para a utilização da maquininha da Stone.</p>
 <p>Tal feature aqui vai ser entendidad da seguinte forma:</p>
@@ -1333,19 +1397,8 @@
 <span class="n">contrato_dsp_dspp</span><span class="p">[</span><span class="s2">&quot;score_dspp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">means_dspp</span>
 </code></pre></div>
 <h5 id="entregou-nao-entregou-leu">Entregou? Não Entregou? Leu?</h5>
-<p>Um outro ponto muito importante que devemos levar em consideração é se o cliente de fato leu a mensagem ou se o mesmo até mesmo recebeu, já que vimos que o número de clientes que não recebem o acionamento (quando deveria ter recebido) é bastante alto, cerca de 47%.</p>
-<div class="highlight"><pre><span></span><code><span class="n">acionamentos_delivery</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">geral_and_comunicados_sorted_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s2">&quot;contrato_id&quot;</span><span class="p">])[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span>
-    <span class="o">.</span><span class="n">agg</span><span class="p">([</span><span class="n">features</span><span class="o">.</span><span class="n">get_entregue</span><span class="p">,</span> <span class="n">features</span><span class="o">.</span><span class="n">get_lido</span><span class="p">,</span> <span class="n">features</span><span class="o">.</span><span class="n">get_nao_entregue</span><span class="p">])</span>
-    <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-<span class="p">)</span>
-
-<span class="c1"># merge para adicionar ao nosso dataset final as features de entregue, não entregue e lido</span>
-<span class="n">contrato_dsp_dspp_qtd_acoes</span> <span class="o">=</span> <span class="n">contrato_dsp_dspp</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
-    <span class="n">right</span><span class="o">=</span><span class="n">acionamentos_delivery</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;inner&quot;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;contrato_id&quot;</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Aqui, também estamos utilizando o módulo de <code>feature_engineering</code>.</p>
+<p>Aqui nós tivemos uma atualização, pois as features que antes computavam os acionamentos de não entregue, entregue, lido e recebido, não estão mais sendo utilizadas.</p>
+<p>Ao invés disso, foi sumerizada a feature que computa a média para os diferentes tipos. Essas alterações também podem ser vistas no <code>final_composition_v2.ipynb</code>.</p>
 <h5 id="valor-devedor-esperado">Valor devedor esperado</h5>
 <p>Essa feature pode nos ajudar a entender se existe alguma relação entre o valor total de empréstimo do crédito com alguma outra feature que iremos trazer para compor a análise final. Como essa informação não estava explícita, resolvi considerar o valor devedor esperado no primeiro dia do contrato como valor de empréstimo daquele cliente.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># features de vlr_saldo_devedor</span>
@@ -1410,7 +1463,7 @@
 <h4 id="2-analise-exploratoria-dataset-final">2. Análise Exploratória (Dataset final)</h4>
 <p>Agora, com nosso novo dataset, nós temos cerca de 41 features as quais podemos utilizar para chegar a conclusão de qual a melhor curva de acionamento do cliente.</p>
 <p>Por questão de tempo e disponibilidade, irei focar em duas análises na tentativa de encontrar algum padrão que nos direcione para nosso objetivo. A primeira será uma análise do score_dsp e score_dspp com features de segmento e subsegmento, e em segundo, do score_dsp e score_dspp com features que indicam se as mensagens foram de fato entregues, lidas ou se simplesmente não foram entregues.</p>
-<p>Vale pontuar aqui que esses scores foram calculado, tirando a média da porcentagem de sucesso ao aplicar uma campanha. E também que poderia muito bom cada uma dessas campanhas possuirem um peso específico, porém nesse primeiro momento vamos considerar todas as campanhas com o mesmo peso.</p>
+<p>Vale pontuar aqui que esses scores foram calculado, tirando a média da porcentagem de sucesso ao aplicar uma campanha. E também que poderia muito bem cada uma dessas campanhas possuirem um peso específico, porém nesse primeiro momento vamos considerar todas as campanhas com o mesmo peso.</p>
 <h5 id="dsp-e-dspp-pelo-segmento-e-subsegmento">DSP e DSPP pelo Segmento e Subsegmento</h5>
 <p>Vamos iniciar filtrando o dados para retornar apenas os dados que vamos utilizar.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># intially by the dsp</span>
@@ -1451,34 +1504,30 @@
 <img alt="boxplot-subseg" src="imgs/dspp-boxplot-sugseg.png" /></p>
 <p>Pelo que vemos aqui, tanto para segmento, quanto para subsegmento, apesar de termos valores oscilando de 0 a 1 em todas as categorias, as medianas aqui são bem menores que no dsp.</p>
 <p>Podemos inferir aqui que o score n consegue ser explicado apenas pelo segmento e subsegmento, sendo necessário mais variáveis, vamos seguir para a utilização das features de entrega do acionamento.</p>
-<h5 id="dsp-e-dspp-pela-entrega-do-acionamento">DSP e DSPP pela Entrega do Acionamento</h5>
-<p>Estou considerando aqui a entrega do acionamento pelas features de:</p>
-<ul>
-<li>ENTREGUE</li>
-<li>NÃO ENTREGUE</li>
-<li>LIDO</li>
-</ul>
-<p>E, construíndo os boxplots novamente, temos:</p>
-<div class="highlight"><pre><span></span><code><span class="n">df_filtered</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
-    <span class="p">[</span><span class="s2">&quot;nr_documento&quot;</span><span class="p">,</span> <span class="s2">&quot;score_dsp&quot;</span><span class="p">,</span> <span class="s2">&quot;get_entregue&quot;</span><span class="p">,</span> <span class="s2">&quot;get_nao_entregue&quot;</span><span class="p">,</span> <span class="s2">&quot;get_lido&quot;</span><span class="p">]</span>
-<span class="p">][(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;segmento&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">segmentos</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s2">&quot;subsegmento&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">subsegmentos</span><span class="p">))]</span>
-
-<span class="c1"># melting the data</span>
-<span class="n">df_filtered_melted</span> <span class="o">=</span> <span class="n">df_filtered</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span>
-    <span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;nr_documento&quot;</span><span class="p">,</span> <span class="s2">&quot;score_dsp&quot;</span><span class="p">],</span>
-    <span class="n">value_vars</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;get_entregue&quot;</span><span class="p">,</span> <span class="s2">&quot;get_nao_entregue&quot;</span><span class="p">,</span> <span class="s2">&quot;get_lido&quot;</span><span class="p">],</span>
-    <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;acionamento&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">box</span><span class="p">(</span><span class="n">df_filtered_melted</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="s2">&quot;acionamento&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s2">&quot;score_dsp&quot;</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</code></pre></div>
-<p><img alt="dsp-acionamento" src="imgs/dsp-acionamento.png" /></p>
-<p>Curiosamente, apesar de nada muito útil, não conseguimos ver nenhuma relação entre as variáveis de acionamento e os scores para o dsp.</p>
-<p>O mesmo foi feito para o dspp, mas obtive o mesmo resultado, não demonstrando nada muito informativo, por isso o gráfico não foi plotado aqui.</p>
+<h4 id="3-clusterizacao">3. Clusterização</h4>
+<p>Aqui foi preciso mudar a análise para uma clusterização, para que fosse possível identificar grupos e correlaciona-los com a melhor curva de acionamento ao cliente.</p>
+<p>No notebook é possível encontrar todo o passo a passo do processo que foi realizado para o DSP e para o DSPP. Afim de simplificar o documento, estou trazendo aqui apenas os clusters obtidos:</p>
+<blockquote>
+<p>Clusters DSP</p>
+</blockquote>
+<p><img alt="clusters-dsp" src="imgs/clusters_dsp.png" /></p>
+<blockquote>
+<p>Clusters DSPP</p>
+</blockquote>
+<p><img alt="clusters-dspp" src="imgs/clusters_dspp.png" /></p>
+<p>Com essa análise, foi possível obter grandes insights que corroboram com uma hipótese sobre a curva ideal.</p>
+<h5 id="dsp">DSP</h5>
+<p>Nos clusters do DSP, vimos que os clusters 2 e 3 possuem valores altos e próximos do score_dsp. Seguido do cluster 0 e em seguida do cluster 1.</p>
+<p>Correlacionando isso a quantidade de sucesso nos acionamentos em cada um desses grupos, vimos que a melhor curva, tem um perfil da distribuição abaixo:</p>
+<p>[img]</p>
+<p>Ou seja, quando mais vezes esse cliente for acionado logo no início, mais chances teremos de sucesso. O que não acontece com clientes que são acionados ao longo de toda sua jornada.</p>
+<h5 id="dspp">DSPP</h5>
+<p>A mesma análise acima foi feita para o DSPP, onde chegamos as mesmas conclusões. Segue a curva ideal para o caso do DSPP.</p>
+<p>[img]</p>
 <h4 id="3-dashboarding">3. Dashboarding</h4>
-<p>Após realizada a análise acima, cheguei a conclusão que a identificação das melhores features que podem nos ajudar a explicar a melhor curva de acionamento do cliente é um trabalho que existe mais conhecimento de negócio e mais tentativa e erro.</p>
-<p>Para otimizar essa análise, irei apresentar um dashboard com alguns filtros e visualizações sobre a mediana do sucesso em cada uma das campanhas, por cliente. Dessa forma conseguimos empoderar os usuários com dados e otimizar a tomada de decisão.</p>
+<p>Após realizada a análise acima, cheguei a conclusão que a curva ideal de acionamento ao cliente é uma curva onde priorizamos ao máximo o acionamento logo no início da inadimplência.</p>
+<p>Infelizmente não consegui trazer a melhor curva para grupos específicos, pois as features da clusterização que mais impactaram no problema estavam correlacionadas em relação ao total de sucesso de acionamento e não o segmento, cidade, estado ou outra feature cadastral.</p>
+<p>Para melhorar essa análise, irei apresentar um dashboard com alguns filtros e visualizações sobre a mediana do sucesso em cada uma das campanhas, por cliente. Dessa forma conseguimos empoderar os usuários com dados e otimizar a tomada de decisão.</p>
 <p>O que teremos de código dentro do dash será como o exibido abaixo:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># seleção de filtros</span>
 <span class="n">filtro_estado</span> <span class="o">=</span> <span class="s2">&quot;SP&quot;</span>
@@ -1515,13 +1564,12 @@
 <p><img alt="img-barplot" src="imgs/barplot-median-props.png" /></p>
 <p>A interpretação é que, para esse conjunto de clientes, filtrados para São Paulo e também cidade de São Paulo, tivemos uma conversão alta para o dsp5, e a mesma foi declinando até o dsp30. Já para o DSPP, tivemos uma conversão bem baixa, para os casos onde houve esse tipo de acionamento, chegando a 20%.</p>
 <h3 id="conclusoes-e-insights">Conclusões e Insights</h3>
-<p>Optei nesse projeto por uma abordagem mais simples, que consistiu uma análise descritiva seguido de uma sumerização dos dados, levando em consideração cada um dos contratos e clientes presentes na base.</p>
+<p>Optei nesse projeto por uma abordagem mais simples, que consistiu uma análise descritiva seguido de uma sumerização dos dados e uma clusterização, levando em consideração cada um dos contratos e clientes presentes na base.</p>
 <p>O objetivo foi de conseguir <strong>insights iniciais que possam nortear melhor a tomada de decisão</strong> sobre qual a melhor curva de acionamento do cliente.</p>
-<p>Nesse quesito, cheguei em um score de sucesso de cada um dos acionamentos direcionados ao cliente. Porém, esse score sozinho não é suficiente para obtermos a melhor curva de acionamento, e o mesmo precisa ser cruzado com outras features (<em>segunda etapa de análise do projeto</em>).</p>
-<p>Ao final dessa segunda etapa, nosso dataset possuia 41 features, e isso foi inevitável dada a complexidade e nuances presentes no dados. Devido a isso, acredito que simples análises descritivas esbarram na limitação de quantas variáveis conseguimos visualizar e buscar por padrões.</p>
-<p>O que deixa claro que esse é um problema que pode ser facilmente abordado como um problema de recomendação, com base em todas as features criadas nesse processo de análise de dados.</p>
+<p>Cheguei assim em um score de sucesso de cada um dos acionamentos direcionados ao cliente. Porém, esse score sozinho não é suficiente para obtermos a melhor curva de acionamento, e o mesmo precisa ser cruzado com outras features (<em>segunda etapa de análise do projeto</em>).</p>
+<p>Ao final dessa segunda etapa, nosso dataset possuia 41 features, e isso foi inevitável dada a complexidade e nuances presentes no dados. Após a limpeza, a clusterização se mostrou bem útil para respondermos os problema.</p>
+<p>Onde concluímos que <strong>a curva ideal de acionamento ao cliente é a curva que contém maior taxa de sucesso de acionamento principalmente no início da jornada</strong> de não pagamento da linha de crédito, o que foi comprovado a partir do estudo dos clusters.</p>
 <p>Outro ponto importante é trazer para esse problema o conceito de <strong>experimentação</strong>, para possibilitar a utilização de <em>modelos de Uplift</em>, e assim saber de fato qual grupo de clientes devem ser abordados com os acionamentos.</p>
-<p>Infelizmente não consegui chegar a uma curva ideal, mas pude compreender que esse problema que pode ser abordado levando em consideração a realidade de cada cliente presente na base, deixando o atendimento mais personalisado.</p>
 <p>Gostaria de finalizar agradecendo a oportunidade fornecida pela Stone em estar participando e aprendendo muito com esse desafio.</p>
 
               
