@@ -14,5 +14,6 @@ download:
 	cd data/ && { curl -O https://stone-data-challenge.s3.amazonaws.com/portfolio_comunicados.csv ; cd -; }
 	cd data/ && { curl -O https://stone-data-challenge.s3.amazonaws.com/portfolio_geral.csv ; cd -; }
 	cd data/ && { curl -O https://stone-data-challenge.s3.amazonaws.com/portfolio_tpv.csv ; cd -; }
+	cd data/ && { curl -O https://stone-data-challenge.s3.amazonaws.com/estados_regioes.csv ; cd -; }
 
 setup: download activate install
