@@ -460,6 +460,19 @@ geral_and_comunicados_sorted_df = geral_comunicados_grouped.sort_values(
 )
 ```
 
+##### Quebra entre o DSP e o DSPP
+
+Detalhes nesse tópico podem ser investigados no arquivo `final_composition_v2.ipynb`, mas o objetivo aqui é desconsiderar (antes de realizar o cálculo), os acionamentos que acabaram não sendo entregues.
+
+Nesse procedimento, foram gerados pesos para os tipos de acionamentos:
+
+- Não entregue = 0
+- Entregue = 1
+- Lido = 2
+- Respondido = 3
+
+Isso nos possibilitou também a criar uma nova feature, que oscila entre 1 e 3. Quanto mais próximo de 3, mais engajado o cliente está em ler e/ou responder aos acionamentos.
+
 ##### Criação de features de DSP e DSPP
 
 Aqui está uma **etapa muito importante** do fluxo da análise dos dados. Uma informação que precisamos ter para prosseguir com a análise é **se os acionamentos foram efetivos** para retornar o cliente para a utilização da maquininha da Stone.
@@ -532,22 +545,9 @@ contrato_dsp_dspp["score_dspp"] = means_dspp
 
 ##### Entregou? Não Entregou? Leu?
 
-Um outro ponto muito importante que devemos levar em consideração é se o cliente de fato leu a mensagem ou se o mesmo até mesmo recebeu, já que vimos que o número de clientes que não recebem o acionamento (quando deveria ter recebido) é bastante alto, cerca de 47%.
+Aqui nós tivemos uma atualização, pois as features que antes computavam os acionamentos de não entregue, entregue, lido e recebido, não estão mais sendo utilizadas.
 
-```py
-acionamentos_delivery = (
-    geral_and_comunicados_sorted_df.groupby(["contrato_id"])["status"]
-    .agg([features.get_entregue, features.get_lido, features.get_nao_entregue])
-    .reset_index()
-)
-
-# merge para adicionar ao nosso dataset final as features de entregue, não entregue e lido
-contrato_dsp_dspp_qtd_acoes = contrato_dsp_dspp.merge(
-    right=acionamentos_delivery, how="inner", on="contrato_id"
-)
-```
-
-Aqui, também estamos utilizando o módulo de `feature_engineering`.
+Ao invés disso, foi sumerizada a feature que computa a média para os diferentes tipos. Essas alterações também podem ser vistas no `final_composition_v2.ipynb`.
 
 ##### Valor devedor esperado
 
@@ -631,7 +631,7 @@ Agora, com nosso novo dataset, nós temos cerca de 41 features as quais podemos 
 
 Por questão de tempo e disponibilidade, irei focar em duas análises na tentativa de encontrar algum padrão que nos direcione para nosso objetivo. A primeira será uma análise do score_dsp e score_dspp com features de segmento e subsegmento, e em segundo, do score_dsp e score_dspp com features que indicam se as mensagens foram de fato entregues, lidas ou se simplesmente não foram entregues.
 
-Vale pontuar aqui que esses scores foram calculado, tirando a média da porcentagem de sucesso ao aplicar uma campanha. E também que poderia muito bom cada uma dessas campanhas possuirem um peso específico, porém nesse primeiro momento vamos considerar todas as campanhas com o mesmo peso.
+Vale pontuar aqui que esses scores foram calculado, tirando a média da porcentagem de sucesso ao aplicar uma campanha. E também que poderia muito bem cada uma dessas campanhas possuirem um peso específico, porém nesse primeiro momento vamos considerar todas as campanhas com o mesmo peso.
 
 ##### DSP e DSPP pelo Segmento e Subsegmento
 
@@ -694,43 +694,45 @@ Pelo que vemos aqui, tanto para segmento, quanto para subsegmento, apesar de ter
 
 Podemos inferir aqui que o score n consegue ser explicado apenas pelo segmento e subsegmento, sendo necessário mais variáveis, vamos seguir para a utilização das features de entrega do acionamento.
 
-##### DSP e DSPP pela Entrega do Acionamento
+#### 3. Clusterização
 
-Estou considerando aqui a entrega do acionamento pelas features de:
+Aqui foi preciso mudar a análise para uma clusterização, para que fosse possível identificar grupos e correlaciona-los com a melhor curva de acionamento ao cliente.
 
-- ENTREGUE
-- NÃO ENTREGUE
-- LIDO
+No notebook é possível encontrar todo o passo a passo do processo que foi realizado para o DSP e para o DSPP. Afim de simplificar o documento, estou trazendo aqui apenas os clusters obtidos:
 
-E, construíndo os boxplots novamente, temos:
+> Clusters DSP
 
-```py
-df_filtered = df[
-    ["nr_documento", "score_dsp", "get_entregue", "get_nao_entregue", "get_lido"]
-][(df["segmento"].isin(segmentos)) & (df["subsegmento"].isin(subsegmentos))]
+![clusters-dsp](imgs/clusters_dsp.png)
 
-# melting the data
-df_filtered_melted = df_filtered.melt(
-    id_vars=["nr_documento", "score_dsp"],
-    value_vars=["get_entregue", "get_nao_entregue", "get_lido"],
-    var_name="acionamento",
-)
+> Clusters DSPP
 
-fig = px.box(df_filtered_melted, x="acionamento", y="score_dsp")
-fig.show()
-```
+![clusters-dspp](imgs/clusters_dspp.png)
 
-![dsp-acionamento](imgs/dsp-acionamento.png)
+Com essa análise, foi possível obter grandes insights que corroboram com uma hipótese sobre a curva ideal.
 
-Curiosamente, apesar de nada muito útil, não conseguimos ver nenhuma relação entre as variáveis de acionamento e os scores para o dsp.
+##### DSP
 
-O mesmo foi feito para o dspp, mas obtive o mesmo resultado, não demonstrando nada muito informativo, por isso o gráfico não foi plotado aqui.
+Nos clusters do DSP, vimos que os clusters 2 e 3 possuem valores altos e próximos do score_dsp. Seguido do cluster 0 e em seguida do cluster 1.
+
+Correlacionando isso a quantidade de sucesso nos acionamentos em cada um desses grupos, vimos que a melhor curva, tem um perfil da distribuição abaixo:
+
+[img]
+
+Ou seja, quando mais vezes esse cliente for acionado logo no início, mais chances teremos de sucesso. O que não acontece com clientes que são acionados ao longo de toda sua jornada.
+
+##### DSPP
+
+A mesma análise acima foi feita para o DSPP, onde chegamos as mesmas conclusões. Segue a curva ideal para o caso do DSPP.
+
+[img]
 
 #### 3. Dashboarding
 
-Após realizada a análise acima, cheguei a conclusão que a identificação das melhores features que podem nos ajudar a explicar a melhor curva de acionamento do cliente é um trabalho que existe mais conhecimento de negócio e mais tentativa e erro.
+Após realizada a análise acima, cheguei a conclusão que a curva ideal de acionamento ao cliente é uma curva onde priorizamos ao máximo o acionamento logo no início da inadimplência.
 
-Para otimizar essa análise, irei apresentar um dashboard com alguns filtros e visualizações sobre a mediana do sucesso em cada uma das campanhas, por cliente. Dessa forma conseguimos empoderar os usuários com dados e otimizar a tomada de decisão.
+Infelizmente não consegui trazer a melhor curva para grupos específicos, pois as features da clusterização que mais impactaram no problema estavam correlacionadas em relação ao total de sucesso de acionamento e não o segmento, cidade, estado ou outra feature cadastral.
+
+Para melhorar essa análise, irei apresentar um dashboard com alguns filtros e visualizações sobre a mediana do sucesso em cada uma das campanhas, por cliente. Dessa forma conseguimos empoderar os usuários com dados e otimizar a tomada de decisão.
 
 O que teremos de código dentro do dash será como o exibido abaixo:
 
@@ -774,18 +776,16 @@ A interpretação é que, para esse conjunto de clientes, filtrados para São Pa
 
 ### Conclusões e Insights
 
-Optei nesse projeto por uma abordagem mais simples, que consistiu uma análise descritiva seguido de uma sumerização dos dados, levando em consideração cada um dos contratos e clientes presentes na base.
+Optei nesse projeto por uma abordagem mais simples, que consistiu uma análise descritiva seguido de uma sumerização dos dados e uma clusterização, levando em consideração cada um dos contratos e clientes presentes na base.
 
 O objetivo foi de conseguir **insights iniciais que possam nortear melhor a tomada de decisão** sobre qual a melhor curva de acionamento do cliente.
 
-Nesse quesito, cheguei em um score de sucesso de cada um dos acionamentos direcionados ao cliente. Porém, esse score sozinho não é suficiente para obtermos a melhor curva de acionamento, e o mesmo precisa ser cruzado com outras features (_segunda etapa de análise do projeto_).
+Cheguei assim em um score de sucesso de cada um dos acionamentos direcionados ao cliente. Porém, esse score sozinho não é suficiente para obtermos a melhor curva de acionamento, e o mesmo precisa ser cruzado com outras features (_segunda etapa de análise do projeto_).
 
-Ao final dessa segunda etapa, nosso dataset possuia 41 features, e isso foi inevitável dada a complexidade e nuances presentes no dados. Devido a isso, acredito que simples análises descritivas esbarram na limitação de quantas variáveis conseguimos visualizar e buscar por padrões.
+Ao final dessa segunda etapa, nosso dataset possuia 41 features, e isso foi inevitável dada a complexidade e nuances presentes no dados. Após a limpeza, a clusterização se mostrou bem útil para respondermos os problema.
 
-O que deixa claro que esse é um problema que pode ser facilmente abordado como um problema de recomendação, com base em todas as features criadas nesse processo de análise de dados.
+Onde concluímos que **a curva ideal de acionamento ao cliente é a curva que contém maior taxa de sucesso de acionamento principalmente no início da jornada** de não pagamento da linha de crédito, o que foi comprovado a partir do estudo dos clusters.
 
 Outro ponto importante é trazer para esse problema o conceito de **experimentação**, para possibilitar a utilização de _modelos de Uplift_, e assim saber de fato qual grupo de clientes devem ser abordados com os acionamentos.
-
-Infelizmente não consegui chegar a uma curva ideal, mas pude compreender que esse problema que pode ser abordado levando em consideração a realidade de cada cliente presente na base, deixando o atendimento mais personalisado.
 
 Gostaria de finalizar agradecendo a oportunidade fornecida pela Stone em estar participando e aprendendo muito com esse desafio.
